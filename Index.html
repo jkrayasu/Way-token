@@ -18,12 +18,11 @@
     <button onclick="flipCoin()">Flip Coin</button>
     <div id="result"></div>
 
+    <!-- Include Web3 -->
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
-    <script>
-        const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE";
-        const contractABI = [ /* ABI from the contract */ ];
-        const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-        const contract = new web3.eth.Contract(contractABI, contractAddress);
+    <!-- Import centralized Web3 setup -->
+    <script type="module">
+        import { web3, contract } from './web3-setup.js';
 
         async function flipCoin() {
             const accounts = await web3.eth.requestAccounts();
