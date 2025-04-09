@@ -1,0 +1,56 @@
+To proceed with the HTML front-end, we'll create a simple interface that allows users to interact with the `flipCoin` function of the WAYToken contract. Here's a basic outline of what the front-end will include:
+
+1. **Character Display**: Show "King Kalos" as a character image or graphic.
+2. **Interaction Prompt**: Display the phrase "Test Your Fate" to encourage users to participate.
+3. **Wager Input**: Allow users to input the amount of tokens they wish to wager.
+4. **Flip Button**: A button to initiate the coin flip transaction.
+5. **Result Display**: Show the result of the coin flip (win or loss) and update the user's token balance.
+
+Here's a basic HTML/JavaScript template to get started:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>King Kalos - Test Your Fate</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #king-kalos { width: 200px; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>King Kalos</h1>
+    <img id="king-kalos" src="king-kalos.png" alt="King Kalos">
+    <h2>Test Your Fate</h2>
+    <input type="number" id="wager" placeholder="Enter your wager" min="1">
+    <button onclick="flipCoin()">Flip Coin</button>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script>
+        const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE";
+        const contractABI = [ /* ABI from the contract */ ];
+        const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        async function flipCoin() {
+            const accounts = await web3.eth.requestAccounts();
+            const wager = document.getElementById('wager').value;
+            const resultDiv = document.getElementById('result');
+
+            try {
+                const receipt = await contract.methods.flipCoin(web3.utils.toWei(wager, 'ether')).send({ from: accounts[0] });
+                const event = receipt.events.CoinFlipResult.returnValues;
+                const message = event.win ? `You won! Your wager is doubled to ${event.returnedAmount}` : "You lost! Your wager is burned.";
+                resultDiv.innerText = message;
+            } catch (error) {
+                resultDiv.innerText = "Transaction failed!";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
